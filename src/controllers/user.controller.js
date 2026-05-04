@@ -2,7 +2,8 @@ const userService = require("../services/user.service");
 
 exports.getAll = async (req, res) => {
   try {
-    const data = await userService.getAll();
+    const { search } = req.query;
+    const data = await userService.getAll(search);
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });

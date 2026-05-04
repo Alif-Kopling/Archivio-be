@@ -1,8 +1,16 @@
 const prisma = require("../config/db");
 const bcrypt = require("bcrypt");
 
-const getAll = async () => {
+const getAll = async (search = "") => {
+  const where = search ? {
+    OR: [
+      { name: { contains: search, mode: 'insensitive' } },
+      { email: { contains: search, mode: 'insensitive' } }
+    ]
+  } : {};
+
   return prisma.user.findMany({
+    where,
     select: {
       id: true,
       name: true,
