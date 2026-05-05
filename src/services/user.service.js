@@ -59,8 +59,20 @@ const remove = async (id) => {
   });
 };
 
+const getById = async (id) => {
+  return prisma.user.findUnique({
+    where: { id: Number(id) },
+    include: {
+      _count: {
+        select: { documents: true }
+      }
+    }
+  });
+};
+
 module.exports = {
   getAll,
+  getById,
   create,
   update,
   remove
