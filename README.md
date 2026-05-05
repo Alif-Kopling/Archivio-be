@@ -1,104 +1,97 @@
-# 🗄️ Archivio — Backend (Project 2: E-Arsip Dokumen Kantor)
+# Archivio — Scalable Enterprise Backend API
 
-> RESTful API untuk sistem manajemen dokumen digital **E-Arsip** dengan autentikasi JWT dan kontrol akses berbasis peran. Backend ini menangani penyimpanan file fisik, manajemen database, dan integrasi pengiriman email.
-
----
-
-## 🧩 Tech Stack
-
-| Teknologi | Versi | Keterangan |
-|---|---|---|
-| [Node.js](https://nodejs.org/) | >= 18 | Runtime JavaScript utama |
-| [Express.js](https://expressjs.com/) | 5.2.1 | Web framework untuk routing & middleware |
-| [Prisma ORM](https://www.prisma.io/) | 5.22.0 | Database ORM untuk MySQL |
-| [MySQL](https://www.mysql.com/) | - | Database relasional utama |
-| [JWT](https://jwt.io/) | 9.0.3 | Autentikasi berbasis token (Stateless) |
-| [Bcrypt](https://github.com/kelektiv/node.bcrypt.js) | 6.0.0 | Enkripsi password pengguna |
-| [Multer](https://github.com/expressjs/multer) | 2.1.1 | Middleware untuk upload file digital |
-| [Nodemailer](https://nodemailer.com/) | 8.0.6 | Layanan pengiriman email SMTP |
+> **Core Infrastructure for Modern Digital Archiving**  
+> RESTful API berkinerja tinggi yang dirancang sebagai tulang punggung sistem manajemen dokumen digital. Mengimplementasikan arsitektur *stateless*, autentikasi JWT terenkripsi, dan manajemen data relasional yang ketat untuk menjamin ketersediaan dan integritas informasi organisasi.
 
 ---
 
-## 🗃️ Database Schema (Prisma Models)
+## Technical Infrastructure Architecture
 
-- **User**: Menyimpan data pengguna, password (hash), dan role (`ADMIN`/`STAFF`).
-- **Document**: Inti dari sistem arsip. Menyimpan metadata dokumen, path file, tipe (`masuk`/`keluar`/`sertifikat`), dan status (`draft`/`final`/`rejected`).
-- **Setting**: Penyimpanan konfigurasi sistem (key-value pair).
+Archivio Backend dibangun dengan fokus pada keamanan dan efisiensi pemrosesan data:
+- **Asynchronous Processing**: Memanfaatkan runtime Node.js untuk menangani I/O intensif seperti pengelolaan file dan komunikasi SMTP tanpa memblokir proses utama.
+- **Relational Data Integrity**: Implementasi [Prisma ORM](https://www.prisma.io/) untuk menjamin konsistensi skema database MySQL dan performa query yang optimal.
+- **Secure File Storage Layer**: Manajemen penyimpanan file fisik dengan sistem penamaan unik (UUID-based) dan kontrol akses terproteksi.
+- **Middleware Pipeline Architecture**: Sistem pemrosesan permintaan berlapis untuk validasi data, autentikasi, dan otorisasi sebelum mencapai logika bisnis inti.
 
 ---
 
-## 📂 Struktur Direktori
+## Core Technical Stack
+
+| Platform | Implementation Detail |
+|---|---|
+| **Runtime Environment** | [Node.js](https://nodejs.org/) — Engine eksekusi JavaScript sisi server yang scalable. |
+| **Server Framework** | [Express.js](https://expressjs.com/) — Arsitektur routing modular dan middleware-centric. |
+| **ORM & Persistence** | [Prisma](https://www.prisma.io/) — Pemetaan objek relasional dengan *type-safety* maksimal. |
+| **Database Engine** | [MySQL](https://www.mysql.com/) — Penyimpanan data relasional yang stabil dan handal. |
+| **Security & Auth** | [JWT](https://jwt.io/) & [Bcrypt](https://github.com/kelektiv/node.bcrypt.js) — Standar industri untuk enkripsi password dan sesi stateless. |
+| **File Management** | [Multer](https://github.com/expressjs/multer) — Penanganan aliran data biner (PDF/DOCX) secara efisien. |
+| **Email Infrastructure** | [Nodemailer](https://nodemailer.com/) — Integrasi layanan notifikasi sistem berbasis SMTP. |
+
+---
+
+## Role-Based Access Control (RBAC) & Governance
+
+Sistem menerapkan kebijakan keamanan akses yang ketat sesuai dengan hierarki organisasi:
+
+1.  **Administrative Governance**: Otoritas penuh terhadap siklus hidup dokumen, manajemen parameter sistem, dan pengawasan audit trail pengguna.
+2.  **Staff Operational Level**: Hak akses operasional untuk pengajuan draf dokumen, pencarian informasi terverifikasi, dan manajemen profil personal.
+
+---
+
+## System Directory Architecture
 
 ```
 Backend/
 ├── prisma/
-│   ├── schema.prisma        # Definisi model database & koneksi
-│   └── migrations/          # Riwayat migrasi database MySQL
+│   ├── schema.prisma        # Arsitektur model data & relasi entitas
+│   └── migrations/          # Version control untuk struktur database
 ├── src/
-│   ├── app.js               # Konfigurasi Express & Middleware Global
-│   ├── config/              # Konfigurasi Database (Prisma Client)
-│   ├── controllers/         # Logika Bisnis per Modul
-│   │   ├── auth.controller.js          # Registrasi & Login
-│   │   ├── user.controller.js          # Manajemen akun pengguna
-│   │   ├── suratMasuk.controller.js    # Manajemen Arsip Surat Masuk
-│   │   ├── suratKeluar.controller.js   # Manajemen Arsip Surat Keluar
-│   │   ├── sertifikat.controller.js    # Manajemen Arsip Sertifikat
-│   │   └── setting.controller.js       # Manajemen Pengaturan Sistem
-│   ├── middlewares/         # Proteksi Route
-│   │   ├── auth.middleware.js          # Verifikasi Token JWT
-│   │   ├── role.middleware.js          # Validasi Hak Akses Role
-│   │   └── upload.middleware.js        # Konfigurasi Multer (Storage & Filter)
-│   ├── routes/              # Definisi Endpoint API
-│   ├── services/            # Abstraksi Database (Prisma Services)
-│   └── utils/               # Helper (Status document, Penamaan file)
-├── uploads/                 # Folder penyimpanan file fisik (PDF/Docs)
-└── package.json
+│   ├── app.js               # Entry point & konfigurasi middleware sistem
+│   ├── controllers/         # Implementasi logika bisnis dan handler endpoint
+│   ├── middlewares/         # Layer proteksi (JWT Verify, Role Guard, File Filter)
+│   ├── routes/              # Definisi gerbang API (Endpoint mapping)
+│   ├── services/            # Layer abstraksi manipulasi data (Prisma Integration)
+│   └── utils/               # Utilitas pendukung & standarisasi respon sistem
+├── uploads/                 # Repositori penyimpanan file fisik terenkripsi
+└── package.json             # Manajemen dependensi & metadata proyek
 ```
 
 ---
 
-## 🚀 Cara Menjalankan
+## Infrastructure Setup
 
-### 1. Konfigurasi Environment (`.env`)
-
-Buat file `.env` di folder root Backend:
-
+### 1. Environment Configuration (`.env`)
+Pastikan parameter berikut dikonfigurasi secara akurat sebelum menjalankan server:
 ```env
 DATABASE_URL="mysql://USER:PASSWORD@localhost:3306/archivio_db"
-JWT_SECRET="masukkan_secret_yang_kuat"
+JWT_SECRET="generate_strong_alphanumeric_secret"
 PORT=3000
-
-# Konfigurasi SMTP (Contoh Gmail)
-SMTP_HOST="smtp.gmail.com"
-SMTP_PORT=587
-SMTP_USER="youremail@gmail.com"
-SMTP_PASS="app_password_gmail"
 ```
 
-### 2. Setup Database & Jalankan Server
-
+### 2. Deployment Steps
 ```bash
-# Install dependencies
+# Instalasi Dependensi
 npm install
 
-# Generate Prisma Client & Jalankan Migrasi
+# Database Synchronization
 npx prisma generate
 npx prisma migrate dev --name init
 
-# Jalankan server dalam mode development
+# Start Service
 npm run dev
 ```
 
 ---
 
-## 🔒 Fitur Keamanan
+## Advanced Security Protocols
 
-- **Role-Based Access Control (RBAC)**: Menjamin Admin memiliki akses penuh sementara Staff memiliki akses terbatas.
-- **Atomic File Deletion**: Saat data arsip dihapus dari database, file fisik di folder `uploads` juga akan dihapus secara otomatis.
-- **Input Sanitization**: Validasi input metadata sebelum disimpan ke database.
-- **Secure Download**: File didownload dengan nama asli yang tersimpan di metadata, bukan nama random dari storage.
+- **Bcrypt Password Hashing**: Mengamankan kredensial pengguna dengan algoritma *salted hashing* tingkat lanjut.
+- **Atomic File Operations**: Menjamin sinkronisasi antara metadata database dan file fisik di storage (Clean-up otomatis saat data dihapus).
+- **JWT Stateless Authentication**: Mengeliminasi kebutuhan penyimpanan sesi di sisi server untuk skalabilitas yang lebih baik.
+- **Resource Sanitization**: Validasi tipe file (MIME-type) dan ukuran untuk mencegah injeksi aset berbahaya.
 
 ---
 
-## 📄 Lisensi
-Proyek ini didistribusikan di bawah lisensi **ISC**.
+## License & Compliance
+Proyek ini dikembangkan sebagai bagian dari infrastruktur internal organisasi.  
+**Archivio Backend © 2026**
