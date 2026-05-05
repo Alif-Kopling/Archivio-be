@@ -16,7 +16,8 @@ exports.getAll = async (req, res) => {
 
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Masuk Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -50,7 +51,8 @@ exports.create = async (req, res) => {
 
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Masuk Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -72,7 +74,8 @@ exports.update = async (req, res) => {
     const data = await suratMasukService.update(id, dataToUpdate);
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Masuk Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -101,7 +104,8 @@ exports.updateStatus = async (req, res) => {
     res.json({ message: "Document status updated successfully.", data: updatedDocument });
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Masuk Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -140,7 +144,8 @@ exports.remove = async (req, res) => {
 
     res.json({ message: "Archive and its physical file successfully destroyed! 🗑️💥" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Masuk Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -162,6 +167,7 @@ exports.download = async (req, res) => {
     const absolutePath = path.join(__dirname, "../../", finalPath);
     res.download(absolutePath, getDownloadFileNameFromPath(finalPath, document.title || "document.pdf"));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Masuk Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

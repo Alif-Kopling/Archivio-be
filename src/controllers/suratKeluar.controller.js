@@ -17,7 +17,8 @@ exports.getAll = async (req, res) => {
 
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Keluar Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -51,7 +52,8 @@ exports.create = async (req, res) => {
 
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Keluar Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -72,7 +74,8 @@ exports.update = async (req, res) => {
     const data = await suratKeluarService.update(id, dataToUpdate);
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Keluar Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -101,7 +104,8 @@ exports.updateStatus = async (req, res) => {
     res.json({ message: "Document status updated successfully.", data: updatedDocument });
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Keluar Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -134,7 +138,8 @@ exports.remove = async (req, res) => {
 
     res.json({ message: "Outgoing Mail archive successfully destroyed! 🗑️💥" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Keluar Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -156,7 +161,8 @@ exports.download = async (req, res) => {
     const absolutePath = path.join(__dirname, "../../", finalPath);
     res.download(absolutePath, getDownloadFileNameFromPath(finalPath, document.title || "document.pdf"));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Surat Keluar Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -232,17 +238,18 @@ exports.sendEmail = async (req, res) => {
 
     const errorMessage = err.message || "Failed to send email.";
     const lowered = errorMessage.toLowerCase();
-    const statusCode = lowered.includes("not found") || lowered.includes("tidak ditemukan")
-      ? 404
-      : lowered.includes("invalid") || lowered.includes("tidak valid")
-        ? 400
-        : lowered.includes("incomplete") || lowered.includes("belum lengkap") || lowered.includes("empty") || lowered.includes("kosong")
-          ? 400
-          : 500;
+    
+    if (lowered.includes("not found") || lowered.includes("tidak ditemukan")) {
+      return res.status(404).json({ success: false, error: "Document or file not found." });
+    }
+    
+    if (lowered.includes("invalid") || lowered.includes("tidak valid") || lowered.includes("incomplete") || lowered.includes("empty")) {
+      return res.status(400).json({ success: false, error: "Invalid request data." });
+    }
 
-    return res.status(statusCode).json({
+    return res.status(500).json({
       success: false,
-      error: errorMessage,
+      error: "Internal server error while sending email.",
     });
   }
 };
