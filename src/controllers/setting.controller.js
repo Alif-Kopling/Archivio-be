@@ -10,6 +10,21 @@ exports.getSettings = async (req, res) => {
   }
 };
 
+exports.getStorageStats = async (req, res) => {
+  try {
+    const totalCount = await prisma.document.count();
+    const storageLimitSetting = await prisma.setting.findUnique({ where: { key: 'storage_limit' } });
+    const storageLimit = storageLimitSetting ? parseInt(storageLimitSetting.value) : 100;
+
+    res.json({
+      total: totalCount,
+      limit: storageLimit
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve storage stats' });
+  }
+};
+
 exports.updateSetting = async (req, res) => {
   const { key, value } = req.body;
   try {

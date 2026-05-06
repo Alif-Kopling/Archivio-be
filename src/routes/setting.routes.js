@@ -5,6 +5,7 @@ const auth = require('../middlewares/auth.middleware');
 const { isAdmin } = require('../middlewares/role.middleware');
 
 router.get('/', auth, settingController.getSettings);
+router.get('/stats', auth, settingController.getStorageStats);
 router.put('/', auth, isAdmin, settingController.updateSetting);
 
 module.exports = router;
