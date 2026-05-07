@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const suratMasukController = require("../controllers/suratMasuk.controller");
-const upload = require("../middlewares/upload.middleware");
+const { uploadSingle, uploadBulk } = require("../middlewares/upload.middleware");
 const auth = require("../middlewares/auth.middleware");
 const { role } = require("../middlewares/role.middleware");
 
@@ -13,7 +13,8 @@ router.get("/", suratMasukController.getAll);
 router.get("/download/:id", suratMasukController.download);
 
 // Staff bisa upload draf, Admin bisa upload final (tapi kita override jadi draft dulu)
-router.post("/", role(["admin", "staff"]), upload.single("file"), suratMasukController.create);
+router.post("/", role(["admin", "staff"]), uploadSingle, suratMasukController.create);
+router.post("/bulk", role(["admin", "staff"]), uploadBulk, suratMasukController.createBulk);
 
 // Cuma Admin yang bisa update status atau hapus arsip (Kelola semua arsip)
 // Menggunakan PATCH untuk update status agar lebih semantik

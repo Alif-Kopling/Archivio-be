@@ -37,12 +37,20 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({ 
+const uploadSingle = multer({ 
   storage,
   fileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024 // Batasi maksimal 5MB
   }
-});
+}).single("file");
 
-module.exports = upload;
+const uploadBulk = multer({ 
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // Batasi maksimal 5MB per file
+  }
+}).array("files", 20); // Max 20 files
+
+module.exports = { uploadSingle, uploadBulk };

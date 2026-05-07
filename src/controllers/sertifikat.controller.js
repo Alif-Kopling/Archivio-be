@@ -3,6 +3,7 @@ const fs = require("fs");
 const sertifikatService = require("../services/sertifikat.service");
 const { getInitialStatus, sanitizeDocumentUpdate } = require("../utils/documentStatus");
 const { getDownloadFileNameFromPath } = require("../utils/fileName");
+const { getBulkFieldValue } = require("../utils/bulkUploadFields");
 
 exports.getAll = async (req, res) => {
   try {
@@ -140,6 +141,45 @@ exports.download = async (req, res) => {
 
     const absolutePath = path.join(__dirname, "../../", finalPath);
     res.download(absolutePath, getDownloadFileNameFromPath(finalPath, document.title || "certificate.pdf"));
+  } catch (err) {
+    console.error("Sertifikat Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.createBulk = async (req, res) => {
+  try {
+    const { role, id: userId } = req.user;
+    const status = getInitialStatus(role);
+    const files = req.files || [];
+
+    if (!files.length) {
+      return res.status(400).json({ error: "At least one certificate file is required." });
+    }
+
+    const results = [];
+    const errors = [];
+
+    for (const [index, file] of files.entries()) {
+      try {
+        const title = getBulkFieldValue(req.body, "title", file, index, file.originalname);
+        const issuer = getBulkFieldValue(req.body, "issuer", file, index);
+
+        const data = await sertifikatService.create({
+          title: title.trim(),
+          issuer: issuer.trim() || null,
+          filePath: file.path,
+          status,
+          createdBy: userId,
+        });
+
+        results.push(data);
+      } catch (err) {
+        errors.push({ file: file.originalname, error: err.message });
+      }
+    }
+
+    res.json({ data: results, errors, total: files.length, success: results.length });
   } catch (err) {
     console.error("Sertifikat Controller Error:", err);
     res.status(500).json({ error: "Internal server error" });

@@ -4,6 +4,7 @@ const suratKeluarService = require("../services/suratKeluar.service");
 const { sendDocumentEmail } = require("../services/email.service");
 const { getInitialStatus, normalizeDocumentDate, sanitizeDocumentUpdate } = require("../utils/documentStatus");
 const { getDownloadFileNameFromPath } = require("../utils/fileName");
+const { getBulkFieldValue } = require("../utils/bulkUploadFields");
 
 exports.getAll = async (req, res) => {
   try {
@@ -251,5 +252,53 @@ exports.sendEmail = async (req, res) => {
       success: false,
       error: "Internal server error while sending email.",
     });
+  }
+};
+
+exports.createBulk = async (req, res) => {
+  try {
+    const { id: userId, role } = req.user;
+    const status = getInitialStatus(role);
+    const files = req.files || [];
+
+    if (!files.length) {
+      return res.status(400).json({ error: "At least one document file is required." });
+    }
+
+    const results = [];
+    const errors = [];
+
+    for (const [index, file] of files.entries()) {
+      try {
+        const title = getBulkFieldValue(req.body, "title", file, index, file.originalname);
+        const sender = getBulkFieldValue(req.body, "sender", file, index);
+        const documentDate = normalizeDocumentDate(
+          getBulkFieldValue(req.body, "documentDate", file, index),
+        );
+
+        if (!sender || !documentDate) {
+          errors.push({ file: file.originalname, error: "Sender and document date are required." });
+          continue;
+        }
+
+        const data = await suratKeluarService.create({
+          title: title.trim(),
+          sender: sender.trim(),
+          documentDate,
+          filePath: file.path,
+          status,
+          createdBy: userId,
+        });
+
+        results.push(data);
+      } catch (err) {
+        errors.push({ file: file.originalname, error: err.message });
+      }
+    }
+
+    res.json({ data: results, errors, total: files.length, success: results.length });
+  } catch (err) {
+    console.error("Surat Keluar Controller Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
