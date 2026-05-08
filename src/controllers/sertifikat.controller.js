@@ -7,12 +7,15 @@ const { getBulkFieldValue } = require("../utils/bulkUploadFields");
 
 exports.getAll = async (req, res) => {
   try {
-    const { search, page = 1, limit = 10 } = req.query;
+    const { search, page = 1, limit = 10, sortBy, sortOrder, status } = req.query;
 
     const data = await sertifikatService.getAll({
       search,
       page: Number(page),
       limit: Number(limit),
+      sortBy,
+      sortOrder,
+      status,
     });
 
     res.json(data);

@@ -4,8 +4,12 @@ const {
   VERIFIED_STATUS_VALUES,
 } = require("../utils/documentStatus");
 
-const getAll = async ({ search, page = 1, limit = 10 }) => {
+const SORTABLE_FIELDS = ["createdAt", "title", "documentDate", "status"];
+
+const getAll = async ({ search, page = 1, limit = 10, sortBy = "createdAt", sortOrder = "desc", status }) => {
   const skip = (page - 1) * limit;
+  const safeSortBy = SORTABLE_FIELDS.includes(sortBy) ? sortBy : "createdAt";
+  const safeSortOrder = sortOrder === "asc" ? "asc" : "desc";
 
   const where = {
     type: "keluar",
@@ -14,13 +18,14 @@ const getAll = async ({ search, page = 1, limit = 10 }) => {
         contains: search,
       },
     }),
+    ...(status && status !== "all" && { status }),
   };
 
   const [data, total, pending, verified] = await Promise.all([
     prisma.document.findMany({
       where,
       orderBy: {
-        createdAt: "desc",
+        [safeSortBy]: safeSortOrder,
       },
       skip,
       take: limit,
