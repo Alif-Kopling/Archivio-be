@@ -21,7 +21,7 @@ Archivio Backend dibangun dengan fokus pada keamanan dan efisiensi pemrosesan da
 |---|---|
 | **Runtime Environment** | [Node.js](https://nodejs.org/) — Engine eksekusi JavaScript sisi server yang scalable. |
 | **Server Framework** | [Express.js](https://expressjs.com/) — Arsitektur routing modular dan middleware-centric. |
-| **ORM & Persistence** | [Prisma](https://www.prisma.io/) — Pemetaan objek relasional dengan *type-safety* maksimal. |
+| **ORM & Persistence** | [Prisma](https://www.prisma.io/) — Pemetaan objek relasional dengan *type-safety* maksimal. Mendukung fitur metadata dokumen dan manajemen konfigurasi sistem (`Setting` model). |
 | **Database Engine** | [MySQL](https://www.mysql.com/) — Penyimpanan data relasional yang stabil dan handal. |
 | **Security & Auth** | [JWT](https://jwt.io/) & [Bcrypt](https://github.com/kelektiv/node.bcrypt.js) — Standar industri untuk enkripsi password dan sesi stateless. |
 | **File Management** | [Multer](https://github.com/expressjs/multer) — Penanganan aliran data biner (PDF/DOCX) secara efisien. |
