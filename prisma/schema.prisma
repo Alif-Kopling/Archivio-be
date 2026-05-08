@@ -28,6 +28,10 @@ model Document {
 
   createdBy Int
   user      User     @relation(fields: [createdBy], references: [id])
+
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
 }
 
 model Setting {
