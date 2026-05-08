@@ -10,5 +10,7 @@ router.use(auth);
 router.use(role(["admin"]));
 
 router.get("/", dashboardController.getOverview);
+router.post("/bulk-approve", dashboardController.bulkApprove);
+router.post("/bulk-reject", dashboardController.bulkReject);
 
 module.exports = router;
