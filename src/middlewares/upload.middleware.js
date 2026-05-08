@@ -1,12 +1,45 @@
 const multer = require("multer");
 const path = require("path");
 
+const MIME_TYPES_BY_FOLDER = {
+  "surat-masuk": [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ],
+  "surat-keluar": [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ],
+  sertifikat: [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "image/jpeg",
+    "image/png",
+  ],
+};
+
+const EXTENSIONS_BY_FOLDER = {
+  "surat-masuk": [".pdf", ".doc", ".docx"],
+  "surat-keluar": [".pdf", ".doc", ".docx"],
+  sertifikat: [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"],
+};
+
+const getUploadFolder = (req) => {
+  let folder = "surat-masuk";
+
+  if (req.baseUrl.includes("surat-keluar")) folder = "surat-keluar";
+  if (req.baseUrl.includes("sertifikat")) folder = "sertifikat";
+
+  return folder;
+};
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    let folder = "surat-masuk"; // Default
-    if (req.baseUrl.includes("surat-keluar")) folder = "surat-keluar";
-    if (req.baseUrl.includes("sertifikat")) folder = "sertifikat";
-    
+    const folder = getUploadFolder(req);
+
     cb(null, `uploads/${folder}/`);
   },
   filename: (req, file, cb) => {
@@ -16,18 +49,11 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  // Ekstensi yang diizinkan (case insensitive)
-  const allowedExtensions = /pdf|doc|docx|jpg|jpeg|png/;
-  // MIME types yang diizinkan
-  const allowedMimeTypes = [
-    "application/pdf",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "image/jpeg",
-    "image/png"
-  ];
+  const folder = getUploadFolder(req);
+  const allowedExtensions = EXTENSIONS_BY_FOLDER[folder] || EXTENSIONS_BY_FOLDER["surat-masuk"];
+  const allowedMimeTypes = MIME_TYPES_BY_FOLDER[folder] || MIME_TYPES_BY_FOLDER["surat-masuk"];
 
-  const extname = allowedExtensions.test(path.extname(file.originalname).toLowerCase());
+  const extname = allowedExtensions.includes(path.extname(file.originalname).toLowerCase());
   const mimetype = allowedMimeTypes.includes(file.mimetype);
 
   if (extname && mimetype) {
