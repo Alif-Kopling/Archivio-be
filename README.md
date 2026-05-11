@@ -11,6 +11,7 @@ Archivio Backend dibangun dengan fokus pada keamanan dan efisiensi pemrosesan da
 - **Asynchronous Processing**: Memanfaatkan runtime Node.js untuk menangani I/O intensif seperti pengelolaan file dan komunikasi SMTP tanpa memblokir proses utama.
 - **Relational Data Integrity**: Implementasi [Prisma ORM](https://www.prisma.io/) untuk menjamin konsistensi skema database MySQL dan performa query yang optimal.
 - **Secure File Storage Layer**: Manajemen penyimpanan file fisik dengan sistem penamaan unik (UUID-based) dan kontrol akses terproteksi.
+- **Trash & Cleanup Management**: Sistem pembersihan otomatis untuk dokumen yang ditolak (*Rejected*) guna mengoptimalkan kapasitas penyimpanan.
 - **Middleware Pipeline Architecture**: Sistem pemrosesan permintaan berlapis untuk validasi data, autentikasi, dan otorisasi sebelum mencapai logika bisnis inti.
 
 ---
