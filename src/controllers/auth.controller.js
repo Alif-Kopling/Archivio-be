@@ -2,6 +2,11 @@ const prisma = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+/**
+ * Handles user authentication.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -14,7 +19,6 @@ exports.login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Pakai bcrypt.compare ya sayangg, biar sinkron sama password yang sudah di-hash
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {

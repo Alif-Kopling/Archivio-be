@@ -5,6 +5,11 @@ const { getInitialStatus, sanitizeDocumentUpdate } = require("../utils/documentS
 const { getDownloadFileNameFromPath } = require("../utils/fileName");
 const { getBulkFieldValue } = require("../utils/bulkUploadFields");
 
+/**
+ * Retrieves all certificates.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.getAll = async (req, res) => {
   try {
     const { search, page = 1, limit = 10, sortBy, sortOrder, status } = req.query;
@@ -25,6 +30,11 @@ exports.getAll = async (req, res) => {
   }
 };
 
+/**
+ * Creates a new certificate.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.create = async (req, res) => {
   try {
     const filePath = req.file ? req.file.path : null;
@@ -45,6 +55,11 @@ exports.create = async (req, res) => {
   }
 };
 
+/**
+ * Updates a certificate by ID.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
@@ -67,6 +82,11 @@ exports.update = async (req, res) => {
   }
 };
 
+/**
+ * Updates a certificate's status.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -94,16 +114,31 @@ exports.updateStatus = async (req, res) => {
   }
 };
 
+/**
+ * Approves a certificate.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.approve = async (req, res) => {
   req.body = { ...req.body, status: "final" };
   return exports.updateStatus(req, res);
 };
 
+/**
+ * Rejects a certificate.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.reject = async (req, res) => {
   req.body = { ...req.body, status: "rejected" };
   return exports.updateStatus(req, res);
 };
 
+/**
+ * Removes a certificate and its file.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.remove = async (req, res) => {
   try {
     const { id } = req.params;
@@ -120,13 +155,18 @@ exports.remove = async (req, res) => {
       fs.unlinkSync(absolutePath);
     }
 
-    res.json({ message: "Certificate archive successfully destroyed! 🗑️💥" });
+    res.json({ message: "Certificate archive successfully removed." });
   } catch (err) {
     console.error("Sertifikat Controller Error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
+/**
+ * Downloads a certificate file.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.download = async (req, res) => {
   try {
     const { id } = req.params;
@@ -150,6 +190,11 @@ exports.download = async (req, res) => {
   }
 };
 
+/**
+ * Creates multiple certificates via bulk upload.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.createBulk = async (req, res) => {
   try {
     const { role, id: userId } = req.user;

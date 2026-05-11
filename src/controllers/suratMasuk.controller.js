@@ -5,6 +5,11 @@ const { getInitialStatus, normalizeDocumentDate, sanitizeDocumentUpdate } = requ
 const { getDownloadFileNameFromPath } = require("../utils/fileName");
 const { getBulkFieldValue } = require("../utils/bulkUploadFields");
 
+/**
+ * Retrieves all incoming letters.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.getAll = async (req, res) => {
   try {
     const { search, page = 1, limit = 10, sortBy, sortOrder, status } = req.query;
@@ -25,6 +30,11 @@ exports.getAll = async (req, res) => {
   }
 };
 
+/**
+ * Creates a new incoming letter.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.create = async (req, res) => {
   try {
     const filePath = req.file ? req.file.path : null;
@@ -60,6 +70,11 @@ exports.create = async (req, res) => {
   }
 };
 
+/**
+ * Creates multiple incoming letters via bulk upload.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.createBulk = async (req, res) => {
   try {
     const { id: userId, role } = req.user;
@@ -108,7 +123,11 @@ exports.createBulk = async (req, res) => {
   }
 };
 
-// Update umum, bisa untuk field lain selain status
+/**
+ * Updates an incoming letter by ID.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
@@ -131,7 +150,11 @@ exports.update = async (req, res) => {
   }
 };
 
-// Endpoint khusus untuk update status oleh Admin
+/**
+ * Updates an incoming letter's status.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -142,7 +165,6 @@ exports.updateStatus = async (req, res) => {
       return res.status(400).json({ error: "New status must be provided." });
     }
 
-    // Pastikan hanya admin yang bisa mengubah status
     if (role.toLowerCase() !== 'admin') {
       return res.status(403).json({ error: "Access denied. Only admin can change document status." });
     }
@@ -161,46 +183,61 @@ exports.updateStatus = async (req, res) => {
   }
 };
 
+/**
+ * Approves an incoming letter.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.approve = async (req, res) => {
   req.body = { ...req.body, status: "final" };
   return exports.updateStatus(req, res);
 };
 
+/**
+ * Rejects an incoming letter.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.reject = async (req, res) => {
   req.body = { ...req.body, status: "rejected" };
   return exports.updateStatus(req, res);
 };
 
-
+/**
+ * Removes an incoming letter and its file.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.remove = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 1. Cari dulu data arsipnya buat ambil path filenya
     const document = await suratMasukService.getById(id);
 
     if (!document) {
       return res.status(404).json({ error: "Archive not found" });
     }
 
-    // 2. Hapus data di database
     await suratMasukService.remove(id);
 
-    // 3. Hapus file fisiknya di folder uploads
     const absolutePath = path.join(__dirname, "../../", document.filePath);
     
-    // Kita cek dulu ya sayangg filenya ada apa ngga, biar nggak error servernya
     if (fs.existsSync(absolutePath)) {
       fs.unlinkSync(absolutePath);
     }
 
-    res.json({ message: "Archive and its physical file successfully destroyed! 🗑️💥" });
+    res.json({ message: "Archive and its physical file successfully removed." });
   } catch (err) {
     console.error("Surat Masuk Controller Error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
+/**
+ * Downloads an incoming letter file.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.download = async (req, res) => {
   try {
     const { id } = req.params;

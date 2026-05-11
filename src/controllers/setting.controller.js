@@ -3,6 +3,10 @@ const fs = require("fs");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+/**
+ * Helper to remove a file from the filesystem.
+ * @param {string} filePath - Path to the file.
+ */
 const removeDocumentFile = (filePath) => {
   if (typeof filePath !== "string" || !filePath.trim()) {
     return;
@@ -14,6 +18,11 @@ const removeDocumentFile = (filePath) => {
   }
 };
 
+/**
+ * Retrieves all application settings.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.getSettings = async (req, res) => {
   try {
     const settings = await prisma.setting.findMany();
@@ -23,6 +32,11 @@ exports.getSettings = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves document storage statistics.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.getStorageStats = async (req, res) => {
   try {
     const totalCount = await prisma.document.count();
@@ -38,6 +52,11 @@ exports.getStorageStats = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves statistics of rejected documents.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.getTrashStats = async (req, res) => {
   try {
     const rejectedCount = await prisma.document.count({
@@ -54,6 +73,11 @@ exports.getTrashStats = async (req, res) => {
   }
 };
 
+/**
+ * Permanently removes all rejected documents.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.emptyRejectedTrash = async (req, res) => {
   try {
     const rejectedDocuments = await prisma.document.findMany({
@@ -85,6 +109,11 @@ exports.emptyRejectedTrash = async (req, res) => {
   }
 };
 
+/**
+ * Updates or creates an application setting.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.updateSetting = async (req, res) => {
   const { key, value } = req.body;
   try {

@@ -1,5 +1,10 @@
 const dashboardService = require("../services/dashboard.service");
 
+/**
+ * Fetches dashboard overview statistics and recent activity.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.getOverview = async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
@@ -16,6 +21,11 @@ exports.getOverview = async (req, res) => {
   }
 };
 
+/**
+ * Bulk approves selected documents.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.bulkApprove = async (req, res) => {
   try {
     const { ids } = req.body;
@@ -26,7 +36,7 @@ exports.bulkApprove = async (req, res) => {
 
     const result = await dashboardService.bulkUpdateStatus(ids, "final");
     res.json({
-      message: `${result.count} documents successfully approved! ✅`,
+      message: `${result.count} documents successfully approved.`,
       count: result.count,
     });
   } catch (err) {
@@ -35,6 +45,11 @@ exports.bulkApprove = async (req, res) => {
   }
 };
 
+/**
+ * Bulk rejects selected documents.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.bulkReject = async (req, res) => {
   try {
     const { ids } = req.body;
@@ -45,7 +60,7 @@ exports.bulkReject = async (req, res) => {
 
     const result = await dashboardService.bulkUpdateStatus(ids, "rejected");
     res.json({
-      message: `${result.count} documents successfully rejected! ❌`,
+      message: `${result.count} documents successfully rejected.`,
       count: result.count,
     });
   } catch (err) {
