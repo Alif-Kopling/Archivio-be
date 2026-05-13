@@ -98,4 +98,5 @@ module.exports = {
   sanitizeDocumentUpdate,
   PENDING_STATUS_VALUES,
   VERIFIED_STATUS_VALUES,
+  REJECTED_STATUS_VALUES,
 };

@@ -59,6 +59,10 @@ exports.getStorageStats = async (req, res) => {
  */
 exports.getTrashStats = async (req, res) => {
   try {
+    if (!Array.isArray(REJECTED_STATUS_VALUES) || REJECTED_STATUS_VALUES.length === 0) {
+      return res.json({ rejected: 0 });
+    }
+
     const rejectedCount = await prisma.document.count({
       where: {
         status: {
@@ -82,6 +86,11 @@ exports.getTrashStats = async (req, res) => {
  */
 exports.emptyRejectedTrash = async (req, res) => {
   try {
+    if (!Array.isArray(REJECTED_STATUS_VALUES) || REJECTED_STATUS_VALUES.length === 0) {
+      console.error("REJECTED_STATUS_VALUES is missing or empty.");
+      return res.status(500).json({ error: "System configuration error: Rejected status values not defined." });
+    }
+
     const rejectedDocuments = await prisma.document.findMany({
       where: {
         status: {
@@ -93,6 +102,13 @@ exports.emptyRejectedTrash = async (req, res) => {
         filePath: true,
       },
     });
+
+    if (rejectedDocuments.length === 0) {
+      return res.json({
+        message: "No rejected documents to remove.",
+        deleted: 0,
+      });
+    }
 
     for (const document of rejectedDocuments) {
       removeDocumentFile(document.filePath);
@@ -111,6 +127,7 @@ exports.emptyRejectedTrash = async (req, res) => {
       deleted: result.count,
     });
   } catch (error) {
+    console.error("Empty Rejected Trash Error:", error);
     res.status(500).json({ error: "Failed to empty rejected trash" });
   }
 };
