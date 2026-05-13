@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
+const { REJECTED_STATUS_VALUES } = require("../utils/documentStatus");
 
 /**
  * Helper to remove a file from the filesystem.
@@ -61,7 +61,9 @@ exports.getTrashStats = async (req, res) => {
   try {
     const rejectedCount = await prisma.document.count({
       where: {
-        status: "rejected",
+        status: {
+          in: REJECTED_STATUS_VALUES
+        }
       },
     });
 
@@ -82,7 +84,9 @@ exports.emptyRejectedTrash = async (req, res) => {
   try {
     const rejectedDocuments = await prisma.document.findMany({
       where: {
-        status: "rejected",
+        status: {
+          in: REJECTED_STATUS_VALUES
+        }
       },
       select: {
         id: true,
@@ -96,7 +100,9 @@ exports.emptyRejectedTrash = async (req, res) => {
 
     const result = await prisma.document.deleteMany({
       where: {
-        status: "rejected",
+        status: {
+          in: REJECTED_STATUS_VALUES
+        }
       },
     });
 

@@ -20,6 +20,7 @@ const STATUS_ALIASES = {
 const STATUS_FIELDS = ["status", "approvalStatus", "nextStatus", "decision", "action"];
 const PENDING_STATUS_VALUES = ["draft", "pending", "submitted", "review", "waiting"];
 const VERIFIED_STATUS_VALUES = ["final", "approved", "approve", "publish", "published"];
+const REJECTED_STATUS_VALUES = ["rejected", "reject", "decline", "declined", "deny", "denied"];
 
 const normalizeStatus = (value) => {
   if (typeof value !== "string") {
