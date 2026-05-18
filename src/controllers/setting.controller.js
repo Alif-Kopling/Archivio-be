@@ -3,10 +3,7 @@ const fs = require("fs");
 const prisma = require("../config/db");
 const { REJECTED_STATUS_VALUES } = require("../utils/documentStatus");
 
-/**
- * Helper to remove a file from the filesystem.
- * @param {string} filePath - Path to the file.
- */
+// delete file from disk
 const removeDocumentFile = (filePath) => {
   if (typeof filePath !== "string" || !filePath.trim()) {
     return;
@@ -18,11 +15,7 @@ const removeDocumentFile = (filePath) => {
   }
 };
 
-/**
- * Retrieves all application settings.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// get all settings
 exports.getSettings = async (req, res) => {
   try {
     const settings = await prisma.setting.findMany();
@@ -32,11 +25,7 @@ exports.getSettings = async (req, res) => {
   }
 };
 
-/**
- * Retrieves document storage statistics.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// get storage usage stats
 exports.getStorageStats = async (req, res) => {
   try {
     const totalCount = await prisma.document.count();
@@ -52,11 +41,7 @@ exports.getStorageStats = async (req, res) => {
   }
 };
 
-/**
- * Retrieves statistics of rejected documents.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// get rejected docs count
 exports.getTrashStats = async (req, res) => {
   try {
     if (!Array.isArray(REJECTED_STATUS_VALUES) || REJECTED_STATUS_VALUES.length === 0) {
@@ -79,11 +64,7 @@ exports.getTrashStats = async (req, res) => {
   }
 };
 
-/**
- * Permanently removes all rejected documents.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// permanently delete all rejected docs
 exports.emptyRejectedTrash = async (req, res) => {
   try {
     if (!Array.isArray(REJECTED_STATUS_VALUES) || REJECTED_STATUS_VALUES.length === 0) {
@@ -132,11 +113,7 @@ exports.emptyRejectedTrash = async (req, res) => {
   }
 };
 
-/**
- * Updates or creates an application setting.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// upsert a setting
 exports.updateSetting = async (req, res) => {
   const { key, value } = req.body;
   try {

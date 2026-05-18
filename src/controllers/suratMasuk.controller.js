@@ -5,11 +5,7 @@ const { getInitialStatus, normalizeDocumentDate, sanitizeDocumentUpdate } = requ
 const { getDownloadFileNameFromPath } = require("../utils/fileName");
 const { getBulkFieldValue } = require("../utils/bulkUploadFields");
 
-/**
- * Retrieves all incoming letters.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// list all incoming letters
 exports.getAll = async (req, res) => {
   try {
     const { search, page = 1, limit = 10, sortBy, sortOrder, status } = req.query;
@@ -30,11 +26,7 @@ exports.getAll = async (req, res) => {
   }
 };
 
-/**
- * Creates a new incoming letter.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// create single incoming letter
 exports.create = async (req, res) => {
   try {
     const filePath = req.file ? req.file.path : null;
@@ -70,11 +62,7 @@ exports.create = async (req, res) => {
   }
 };
 
-/**
- * Creates multiple incoming letters via bulk upload.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// bulk upload incoming letters
 exports.createBulk = async (req, res) => {
   try {
     const { id: userId, role } = req.user;
@@ -123,11 +111,7 @@ exports.createBulk = async (req, res) => {
   }
 };
 
-/**
- * Updates an incoming letter by ID.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// update incoming letter
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
@@ -150,11 +134,7 @@ exports.update = async (req, res) => {
   }
 };
 
-/**
- * Updates an incoming letter's status.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// update incoming letter status (admin only)
 exports.updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -183,31 +163,19 @@ exports.updateStatus = async (req, res) => {
   }
 };
 
-/**
- * Approves an incoming letter.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// approve incoming letter
 exports.approve = async (req, res) => {
   req.body = { ...req.body, status: "final" };
   return exports.updateStatus(req, res);
 };
 
-/**
- * Rejects an incoming letter.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// reject incoming letter
 exports.reject = async (req, res) => {
   req.body = { ...req.body, status: "rejected" };
   return exports.updateStatus(req, res);
 };
 
-/**
- * Removes an incoming letter and its file.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// delete incoming letter and its file
 exports.remove = async (req, res) => {
   try {
     const { id } = req.params;
@@ -233,11 +201,7 @@ exports.remove = async (req, res) => {
   }
 };
 
-/**
- * Downloads an incoming letter file.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// download incoming letter file
 exports.download = async (req, res) => {
   try {
     const { id } = req.params;

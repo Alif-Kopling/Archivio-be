@@ -1,10 +1,6 @@
 const userService = require("../services/user.service");
 
-/**
- * Retrieves all users.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// list all users
 exports.getAll = async (req, res) => {
   try {
     const { search } = req.query;
@@ -16,11 +12,7 @@ exports.getAll = async (req, res) => {
   }
 };
 
-/**
- * Creates a new user.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// create user
 exports.create = async (req, res) => {
   try {
     const data = await userService.create(req.body);
@@ -31,11 +23,7 @@ exports.create = async (req, res) => {
   }
 };
 
-/**
- * Updates a user by ID.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// update user
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
@@ -47,11 +35,7 @@ exports.update = async (req, res) => {
   }
 };
 
-/**
- * Deletes a user by ID.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// delete user
 exports.remove = async (req, res) => {
   try {
     const { id } = req.params;

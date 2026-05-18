@@ -5,7 +5,7 @@ const userController = require("../controllers/user.controller");
 const auth = require("../middlewares/auth.middleware");
 const { role } = require("../middlewares/role.middleware");
 
-// Semua rute Master Data User cuma bisa diakses sama Admin ya sayangg!
+// admin-only: user management
 router.use(auth);
 router.use(role(["admin"]));
 

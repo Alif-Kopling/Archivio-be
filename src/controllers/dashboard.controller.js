@@ -1,10 +1,6 @@
 const dashboardService = require("../services/dashboard.service");
 
-/**
- * Fetches dashboard overview statistics and recent activity.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// get dashboard stats and recent activity
 exports.getOverview = async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
@@ -21,11 +17,7 @@ exports.getOverview = async (req, res) => {
   }
 };
 
-/**
- * Bulk approves selected documents.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// bulk approve documents
 exports.bulkApprove = async (req, res) => {
   try {
     const { ids } = req.body;
@@ -45,11 +37,7 @@ exports.bulkApprove = async (req, res) => {
   }
 };
 
-/**
- * Bulk rejects selected documents.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// bulk reject documents
 exports.bulkReject = async (req, res) => {
   try {
     const { ids } = req.body;

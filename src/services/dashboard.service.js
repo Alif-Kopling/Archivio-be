@@ -33,23 +33,23 @@ const getOverview = async ({ search, page = 1, limit = 10 }) => {
   const skip = (safePage - 1) * safeLimit;
   const searchWhere = buildSearchWhere(search);
 
-  // Kita gabungkan query-nya biar database nggak kerja berkali-kali ya dikk..
+  // run queries in parallel to avoid multiple round trips
   const [counts, pendingTotal, data] = await Promise.all([
-    // Ambil semua statistik status dalam satu tarikan napas!
+    // group by status to get all counts at once
     prisma.document.groupBy({
       by: ['status'],
       _count: {
         _all: true
       }
     }),
-    // Ini buat pagination data yang lagi dicari/difilter
+    // count pending docs for pagination
     prisma.document.count({
       where: {
         ...searchWhere,
         status: { in: PENDING_STATUS_VALUES }
       },
     }),
-    // Ambil datanya
+    // fetch pending docs for the list
     prisma.document.findMany({
       where: {
         ...searchWhere,
@@ -73,7 +73,7 @@ const getOverview = async ({ search, page = 1, limit = 10 }) => {
     }),
   ]);
 
-  // Kita rapihin datanya biar gampang dipake di frontend
+  // normalize groupBy results into simple counters
   let total = 0;
   let pending = 0;
   let verified = 0;

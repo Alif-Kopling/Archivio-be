@@ -6,19 +6,19 @@ const { uploadSingle, uploadBulk } = require("../middlewares/upload.middleware")
 const auth = require("../middlewares/auth.middleware");
 const { role } = require("../middlewares/role.middleware");
 
-// Semua rute di bawah ini butuh login (auth)
+// all routes require auth
 router.use(auth);
 
 router.get("/", suratMasukController.getAll);
 router.get("/download/:id", suratMasukController.download);
 
-// Staff bisa upload draf, Admin bisa upload final (tapi kita override jadi draft dulu)
+// both staff and admin can upload, always saved as draft
 router.post("/", role(["admin", "staff"]), uploadSingle, suratMasukController.create);
 router.post("/bulk", role(["admin", "staff"]), uploadBulk, suratMasukController.createBulk);
 
-// Cuma Admin yang bisa update status atau hapus arsip (Kelola semua arsip)
-// Menggunakan PATCH untuk update status agar lebih semantik
-router.patch("/:id/status", role(["admin"]), suratMasukController.updateStatus); // Membuat endpoint khusus update status
+// admin-only: manage all archives
+// using PATCH for status updates
+router.patch("/:id/status", role(["admin"]), suratMasukController.updateStatus); // dedicated status endpoint
 router.patch("/:id/approve", role(["admin"]), suratMasukController.approve);
 router.patch("/:id/reject", role(["admin"]), suratMasukController.reject);
 router.put("/:id", role(["admin"]), suratMasukController.update); // Tetap sediakan PUT untuk update umum jika ada field lain

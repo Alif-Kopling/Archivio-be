@@ -16,10 +16,10 @@ router.post("/:id/send-email", role(["admin", "staff"]), suratKeluarController.s
 router.post("/", role(["admin", "staff"]), uploadSingle, suratKeluarController.create);
 router.post("/bulk", role(["admin", "staff"]), uploadBulk, suratKeluarController.createBulk);
 
-// Update umum, bisa untuk field lain selain status
+// general update, for fields other than status
 router.put("/:id", role(["admin"]), suratKeluarController.update);
 
-// Endpoint khusus untuk update status oleh Admin
+// admin-only status endpoints
 router.patch("/:id/status", role(["admin"]), suratKeluarController.updateStatus);
 router.patch("/:id/approve", role(["admin"]), suratKeluarController.approve);
 router.patch("/:id/reject", role(["admin"]), suratKeluarController.reject);

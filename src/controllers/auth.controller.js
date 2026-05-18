@@ -2,11 +2,7 @@ const prisma = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-/**
- * Handles user authentication.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
+// login handler
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;

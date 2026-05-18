@@ -24,7 +24,6 @@ const getAll = async (search = "") => {
 };
 
 const create = async (data) => {
-  // Hash password biar aman ya adikk!
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(data.password, salt);
 
@@ -41,7 +40,7 @@ const create = async (data) => {
 const update = async (id, data) => {
   const updateData = { ...data };
 
-  // Kalau ada password baru, kita hash juga
+  // hash new password if provided
   if (updateData.password) {
     const salt = await bcrypt.genSalt(10);
     updateData.password = await bcrypt.hash(updateData.password, salt);
